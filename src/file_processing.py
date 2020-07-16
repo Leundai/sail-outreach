@@ -20,8 +20,9 @@ class School_Type(Enum):
     PrivateSchool = 5
     CharterSchool = 7
 
-def file_handler(input_file=r"D:\\Documents\\repos\\sail-outreach\\dir_ed_entities.xls"):
+def file_handler(input_file=r"D:\\Documents\\repos\\sail-outreach\\data\\dir_ed_entities.xls"):
     school_row = 2
+    count = 0
     wb = xlrd.open_workbook(input_file)
 
     for school_type in School_Type:
@@ -37,7 +38,7 @@ def file_handler(input_file=r"D:\\Documents\\repos\\sail-outreach\\dir_ed_entiti
         for school_row in range(sheet.nrows):
             row_data = sheet.row_values(school_row)
 
-            if school_type == School_Type.PublicSchool and "Dist" in row_data[Col_Index.RecType.value]:
+            if "Dist" == row_data[Col_Index.RecType.value]:
                 continue
 
             #Only to focus in any school that teaches seniors
@@ -48,7 +49,9 @@ def file_handler(input_file=r"D:\\Documents\\repos\\sail-outreach\\dir_ed_entiti
                 school = Schools(name=name, city=city, type_of=type_of)
                 db.session.add(school)
                 print(school)
+                count += 1
                 
     db.session.commit()
+    print(count)
 
 file_handler()
