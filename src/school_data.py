@@ -8,27 +8,34 @@ import config
 # Interval of 6 seconds per request
 interval = 6
 count_invervals = 0
-MAX_INTERVALS = 3
-NUM_OF_SCHOOLS = 1206
+MAX_INTERVALS = 500 #We can't make more than 500 calls otherwise we get bogus data
+NUM_OF_SCHOOLS = 1206 # All schools in database that may or may not have data
 
-index = 1
-def startTimer():
-    threading.Timer(interval, startTimer).start()
+# TODO: Create a JSON file that stores the current index that we are querying for so that it continue unto the next day.
+# TODO: Populate the missing schools with data that school digger api doesn't contain
+
+index = 499
+def startQuery():
+    threading.Timer(interval, startQuery).start()
 
     global index
     global count_invervals
     global MAX_INTERVALS
 
+    # TODO: This doesn't finish the actual program, it keeps stating Session Finished.
     if (count_invervals >= NUM_OF_SCHOOLS or count_invervals >= MAX_INTERVALS):
         print("Session Finished! Currently at index %d and interval %d" % (index, count_invervals))
         exit()
         return
     
+    # Ask Leo for API Key or make your own through school digger, currently using the Basic Plan
     row = Schools.query.get(index)
     params = {"st": 'IL', "q": row.name, "city": row.city, "format": "json", "appID": config.appID, "appKey": config.apiKey}
     response = requests.get(f"https://api.schooldigger.com/v1.2/schools", params=params)
     count_invervals += 1
 
+    # TODO: Find a way of making this prettier?
+    # Goes through the json response and only selects the first index it returns if there even is a school
     if response.json()["numberOfSchools"] != 0:
         row.num_of_students = response.json()["schoolList"][0]["schoolYearlyDetails"][0]["numberOfStudents"]
         row.percent_af = response.json()["schoolList"][0]["schoolYearlyDetails"][0]["percentofAfricanAmericanStudents"]
@@ -48,4 +55,4 @@ def startTimer():
 
     index += 1
 
-startTimer()
+startQuery()

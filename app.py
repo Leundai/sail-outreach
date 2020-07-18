@@ -6,13 +6,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///schools.db'
 db = SQLAlchemy(app)
 
-# Transfer to Pandas in order to be able to store everything in to a table
 # TODO
-# Transfer to Pandas
-#   This will help with storing a table and if they want to export then we can easily create an excel sheet
-# Connect to API so that we can scrape the data and store it into the database
-# Likely we will need to update the database so that it supports storing demographic numbers
 # Create the Visual which will simply just display a rank. Later I can add some visuals
+
 class Schools(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)

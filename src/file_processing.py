@@ -20,6 +20,7 @@ class School_Type(Enum):
     PrivateSchool = 5
     CharterSchool = 7
 
+# TODO: Change path of file in order to be able to run in other machines.
 def file_handler(input_file=r"D:\\Documents\\repos\\sail-outreach\\data\\dir_ed_entities.xls"):
     school_row = 2
     count = 0
@@ -38,6 +39,7 @@ def file_handler(input_file=r"D:\\Documents\\repos\\sail-outreach\\data\\dir_ed_
         for school_row in range(sheet.nrows):
             row_data = sheet.row_values(school_row)
 
+            # Skips all rows that are Districts not actual high schools
             if "Dist" == row_data[Col_Index.RecType.value]:
                 continue
 
@@ -52,6 +54,6 @@ def file_handler(input_file=r"D:\\Documents\\repos\\sail-outreach\\data\\dir_ed_
                 count += 1
                 
     db.session.commit()
-    print(count)
+    print("Number of Schools in database: %d" % (count))
 
 file_handler()
