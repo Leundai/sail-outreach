@@ -4,6 +4,108 @@
 
 {% endblock %}
 
-{% block body %}
-<h1>Template </h1>
+{% block content %}
+  <div class="row">
+    <div class="col-md-4">
+      <div class="content-section">
+      <h3>Ranking Options</h3>
+      <p class='text-muted'>Here you can choose your ranking filters and other list options
+        <form action="/" method="POST">
+          <!--Change this side bar so that it follows when you scroll down while you're in desktop to make it nice!-->
+          <div class="form-group">
+            <label for="sel-filter">Select Filter: </label>
+            <select class="form-control" name="sel-filter" id="sel-filter">
+              <option value=0>None</option>
+              <option value=1>White</option>
+              <option value=2>Black</option>
+              <option value=3>Asian</option>
+              <option value=4>Native American</option>
+              <option value=5>Hispanic</option>
+              <option value=6>Pacific Islander</option>
+              <option value=7>Two or More Races</option>
+              <option value=8>Low Income</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="percent-filter">Percent Filter: </label>
+            <input type="number" name="percent-filter" id="percent-filter" value="">
+          </div>
+          <div class="form-group">
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="ascending" name="ascending">
+              <label class="custom-control-label" for="ascending">Ascending Order</label>
+            </div>
+          </div>
+          <input class="btn" type="submit" value="Update">
+        </form>
+      </p>
+    </div>
+    </div>
+    <div class="col-md-8">
+      <h1>Schools</h1>
+      {%for school in schools%}
+        <article class="media content-section table-responsive">
+          <div class="media-body">
+          <h3><a class="article-title" href="#">{{school.name}}, {{school.city}}</a></h3>
+          <h4 class="article-content">Students: {{school.num_of_students}} </h4>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Black</th>
+                <th scope="col">Asian</th>
+                <th scope="col">Hispanic</th>
+                <th scope="col">Native American</th>
+                <th scope="col">White</th>
+                <th scope="col">Pacific Islander</th>
+                <th scope="col">Two or More</th>
+                <th scope="col">Free Lunch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"></th>
+                  <td>{{school.percent_bl}}%</td>
+                  <td>{{school.percent_as}}%</td>
+                  <td>{{school.percent_his}}%</td>
+                  <td>{{school.percent_nat}}%</td>
+                  <td>{{school.percent_whit}}%</td>
+                  <td>{{school.percent_paci}}%</td>
+                  <td>{{school.percent_two}}%</td>
+                  <td>{{school.percent_low}}%    </td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </article>
+      {%endfor%}    
+    </div>
+  </div>
+  <script>
+    document.getElementById("sel-filter").onchange = function() {
+      document.getElementById("percent-filter").disabled = this.value == 0;
+    }
+
+    window.onload = function() {
+
+      // If values are not blank, restore them to the fields
+      var sel_filter = sessionStorage.getItem('sel_filter');
+      if (sel_filter !== null) $('#sel-filter').val(sel_filter);
+
+      var percent = sessionStorage.getItem('percent');
+      if (sel_filter == "0") $('#percent-filter').prop("disabled", true);
+      if (percent !== null) $('#percent-filter').val(percent);
+
+      var is_ascending= sessionStorage.getItem('is_ascending');
+      if (is_ascending !== "false") $('#ascending').prop("checked", true);
+    }
+
+    window.onbeforeunload = function() {
+      sessionStorage.setItem("sel_filter", $('#sel-filter').val());
+      sessionStorage.setItem("percent", $('#percent-filter').val());
+      sessionStorage.setItem("is_ascending", $('#ascending').prop("checked"));
+    }
+  </script>
 {% endblock %}
+
+
