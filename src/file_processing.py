@@ -10,7 +10,7 @@ This module takes in information from files for database storage
 
 import sys
 from pathlib import Path
-import xlrd
+import pandas as pd
 sys.path.append('../')
 from app import Schools, db
 
@@ -23,7 +23,7 @@ TODO:
         https://nces.ed.gov/ccd/elsi/tableGenerator.aspx
 """
 
-path_data = Path(__file__).parent / "../data/illinois.xlsx"
+path_data = Path(__file__).parent / "../data/national.csv"
 
 #This was created in reference to
 #../data/illinois.xlsx
@@ -43,7 +43,7 @@ Two_or_More = 22
 Low_Income = 26
 
 # TODO: Change path of file in order to be able to run in other machines.
-def file_handler():
+def file_handler() -> None:
     school_row = 2
     count = 0
     print("Opening!")
@@ -87,6 +87,11 @@ def file_handler():
                 
     db.session.commit()
     print("Number of Schools in database: %d" % (count))
+    return None
 
-print("Hello")
-file_handler()
+def pandas_file_handler():
+    csv_file = pd.read_csv(path_data, skiprows=6, skipfooter=7)
+    print(csv_file)
+
+#file_handler()
+pandas_file_handler()
