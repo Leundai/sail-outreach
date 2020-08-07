@@ -10,9 +10,9 @@ This module takes in information from files for database storage
 
 import sys
 from pathlib import Path
+from sqlalchemy.types import Integer, String
 import pandas as pd
 sys.path.append('../')
-from app import Schools, db
 
 """
 TODO:
@@ -42,56 +42,40 @@ Pacific = 21
 Two_or_More = 22
 Low_Income = 26
 
-# TODO: Change path of file in order to be able to run in other machines.
-def file_handler() -> None:
-    school_row = 2
-    count = 0
-    print("Opening!")
-    wb = xlrd.open_workbook(path_data)
-    print("Its taking looong")
-    sheet = wb.sheet_by_index(0)
-    print("opened first sheet!")
-
-    for school_row in range(sheet.nrows):
-        row_data = sheet.row_values(school_row)
-
-        # Skips all rows that are Districts not actual high schools
-        if "District" == row_data[Type]:
-            continue
-
-        #Only to focus in any school that teaches seniors
-        if "12" in str(row_data[Grades]):
-            name = row_data[Name]
-            city = row_data[City]
-            num_of_students = int(row_data[Student_Count] or 0)
-            white = float(row_data[White] or 0)
-            black = float(row_data[Black] or 0)
-            hispanic = float(row_data[Hispanic] or 0)
-            asian = float(row_data[Asian] or 0)
-            native = float(row_data[Native] or 0)
-            pacific = float(row_data[Pacific] or 0)
-            two_or_more = float(row_data[Two_or_More] or 0)
-            low_income = float(row_data[Low_Income] or 0)
-
-            
-            school = Schools(
-                name=name, city=city,
-                num_of_students=num_of_students, percent_bl=black,
-                percent_whit=white, percent_his=hispanic, percent_as=asian,
-                percent_nat=native, percent_paci=pacific,
-                percent_two=two_or_more, percent_low=low_income)
-            db.session.add(school)
-            
-            print(school)
-            count += 1
-                
-    db.session.commit()
-    print("Number of Schools in database: %d" % (count))
-    return None
-
+# Continue to transfer the way of getting data from csv to a database !!! Clean up Data!!
 def pandas_file_handler():
-    csv_file = pd.read_csv(path_data, skiprows=6, skipfooter=7)
-    print(csv_file)
+    dataframe = pd.read_csv(path_data, skiprows=6, skipfooter=7, engine='python', encoding='utf-8')
+    dataframe.columns = ['name', 'state', 'st_abrv', 'county', 'website', 'phone', 'school_type', '12_offered', 'num_of_students', 'percent_male', 'percent_fem', 'percent_two', 'percent_paci', 'percent_whit', 'percent_bl', 'percent_his', 'percent_as', 'percent_nat', 'percent_low', 'city']
+    dataframe = dataframe.replace(['†', '–', '‡', '="0"'], ['0','0','0','0'], regex=True)
+    print(dataframe.dtypes)
+    return dataframe
 
-#file_handler()
-pandas_file_handler()
+def pandas_to_sql(dataframe, db):
+    dataframe.to_sql(
+        name='School',
+        con=db.engine,
+        index_label='id',
+        if_exists='replace',
+        dtype={
+            'name': String(100),
+            'state': String(100),
+            'st_abrv': String(3),
+            'county': String(100),
+            'website': String(100),
+            'phone': Integer,
+            'school_type': String(100),
+            '12_offered': String(100),
+            'num_of_students': Integer,
+            'percent_male': Integer,
+            'percent_fem': Integer,
+            'percent_two': Integer,
+            'percent_paci': Integer,
+            'percent_whit': Integer,
+            'percent_bl': Integer,
+            'percent_his': Integer,
+            'percent_as': Integer,
+            'percent_nat': Integer,
+            'percent_low': Integer,
+            'city': String(100)
+        }
+        )

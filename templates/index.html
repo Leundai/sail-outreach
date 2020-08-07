@@ -6,7 +6,7 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-lg-4">
       <div class="content-section">
       <h3>Ranking Options</h3>
       <p class='text-muted'>Here you can choose your ranking filters and other list options
@@ -41,17 +41,16 @@
       </p>
     </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-lg-8">
       <h1>Schools</h1>
       {%for school in schools%}
         <article class="media content-section table-responsive">
           <div class="media-body">
           <h3><a class="article-title" href="#">{{school.name}}, {{school.city}}</a></h3>
           <h4 class="article-content">Students: {{school.num_of_students}} </h4>
-          <table class="table">
+          <table id="no-more-tables" class="table table-sm">
             <thead>
               <tr>
-                <th scope="col"></th>
                 <th scope="col">Black</th>
                 <th scope="col">Asian</th>
                 <th scope="col">Hispanic</th>
@@ -64,15 +63,14 @@
             </thead>
             <tbody>
               <tr>
-                <th scope="row"></th>
-                  <td>{{school.percent_bl}}%</td>
-                  <td>{{school.percent_as}}%</td>
-                  <td>{{school.percent_his}}%</td>
-                  <td>{{school.percent_nat}}%</td>
-                  <td>{{school.percent_whit}}%</td>
-                  <td>{{school.percent_paci}}%</td>
-                  <td>{{school.percent_two}}%</td>
-                  <td>{{school.percent_low}}%    </td>
+                  <td data-title="Black Population">{{school.percent_bl}}%</td>
+                  <td data-title="Asian Population">{{school.percent_as}}%</td>
+                  <td data-title="Hispanic Population">{{school.percent_his}}%</td>
+                  <td data-title="Native Population">{{school.percent_nat}}%</td>
+                  <td data-title="White Population">{{school.percent_whit}}%</td>
+                  <td data-title="Pacific Population">{{school.percent_paci}}%</td>
+                  <td data-title="Two+ Races Population">{{school.percent_two}}%</td>
+                  <td data-title="Low Income Population">{{school.percent_low}}%</td>
               </tr>
             </tbody>
           </table>
@@ -93,11 +91,12 @@
       if (sel_filter !== null) $('#sel-filter').val(sel_filter);
 
       var percent = sessionStorage.getItem('percent');
-      if (sel_filter == "0") $('#percent-filter').prop("disabled", true);
+      if (document.getElementById("sel-filter").value == "0") $('#percent-filter').prop("disabled", true);
       if (percent !== null) $('#percent-filter').val(percent);
 
-      var is_ascending= sessionStorage.getItem('is_ascending');
-      if (is_ascending !== "false") $('#ascending').prop("checked", true);
+      var is_ascending = sessionStorage.getItem('is_ascending');
+      if (is_ascending == "false") $('#ascending').prop("checked", false);
+      if (is_ascending == "true") $('#ascending').prop("checked", true);
     }
 
     window.onbeforeunload = function() {
