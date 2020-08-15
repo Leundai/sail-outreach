@@ -8,6 +8,7 @@ With Flask this provides a webapp for outreach usage.
 :license: Apache2, see LICENSE for more details.
 """
 import sys
+from os import path
 sys.path.append('src/')
 from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
@@ -41,17 +42,21 @@ class Schools(db.Model):
     percent_fem = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<School %s, %s - %s - %s%% - %s%% - %s%%>' % (
-                self.name, self.city, 
+        return '<School %s, %s - %s - %s%% - %s%% - %s%% - %s%%>' % (
+                self.name, self.city, self.state, 
                 self.num_of_students, self.percent_bl, 
                 self.percent_as, self.percent_his
             )
 
-pandas_to_sql(pandas_file_handler(), db)
+#TODO: Check the website every certain year date when databse is updated
+if not path.exists("schools.db"):
+    pandas_to_sql(pandas_file_handler(), db)
 
 @app.route('/',  methods=['POST', 'GET'])
 def index():
-    schools = Schools.query.order_by(Schools.num_of_students.desc()).all()
+    # Added an extra space to accomodate for IL Abbrevation
+    # TODO: Add options of choosing certain states!
+    schools = Schools.query.filter(Schools.st_abrv == "IL" + " ").order_by(Schools.num_of_students.desc()).all()
     if request.method == "POST":
         select_filter = request.form['sel-filter']
         filter_percent_input = ""
