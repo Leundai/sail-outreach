@@ -54,13 +54,23 @@ if not path.exists("schools.db"):
 
 @app.route('/',  methods=['POST', 'GET'])
 def index():
-    # Added an extra space to accomodate for IL Abbrevation
-    # TODO: Add options of choosing certain states!
-    schools = Schools.query.filter(Schools.st_abrv == "IL" + " ").order_by(Schools.num_of_students.desc()).all()
+    schools = (Schools.query
+        .filter(Schools.st_abrv == "IL")
+        .order_by(Schools.num_of_students
+        .desc())
+        .all()
+        )
     if request.method == "POST":
         select_filter = request.form['sel-filter']
+
+        select_state = request.form['sel-state']
+        if not select_state:
+            #Default State Value
+            select_state = "IL"
+
         filter_percent_input = ""
         filter_ = None
+        
         try:
             filter_percent_input = request.form['percent-filter']
             filter_percent, filter_ = get_school_col(int(select_filter))
@@ -78,14 +88,20 @@ def index():
 
         if is_ascending:
             schools = (
-                Schools.query.filter(filter_ > filter_percent)
+                Schools.query
+                .filter(filter_ > filter_percent)
+                .filter(Schools.st_abrv == select_state)
                 .order_by(Schools.num_of_students)
-                .all())
+                .all()
+                )
         else:
             schools = (
-                Schools.query.filter(filter_ > filter_percent)
+                Schools.query
+                .filter(filter_ > filter_percent)
+                .filter(Schools.st_abrv == select_state)
                 .order_by(Schools.num_of_students.desc())
-                .all())
+                .all()
+                )
     else:
         print("Get Request Made")
 

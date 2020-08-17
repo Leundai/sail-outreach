@@ -42,22 +42,57 @@ Pacific = 21
 Two_or_More = 22
 Low_Income = 26
 
-# Continue to transfer the way of getting data from csv to a database !!! Clean up Data!!
 def pandas_file_handler():
-    dataframe = pd.read_csv(path_data, skiprows=6, skipfooter=7, engine='python', encoding='utf-8')
-    dataframe.columns = ['name', 'state', 'st_abrv', 'county', 'website', 'phone', 'school_type', '12_offered', 'num_of_students', 'percent_male', 'percent_fem', 'percent_two', 'percent_paci', 'percent_whit', 'percent_bl', 'percent_his', 'percent_as', 'percent_nat', 'percent_low', 'city']
-    dataframe = dataframe.replace(['†', '–', '‡', '="0"'], ['0','0','0','0'], regex=True)
-    #Changes all the values for students into numeric
-    dataframe[['num_of_students' ,'percent_male', 'percent_fem', 'percent_two', 'percent_paci', 'percent_whit', 'percent_bl', 'percent_his', 'percent_as', 'percent_nat', 'percent_low']] = dataframe[['num_of_students', 'percent_male', 'percent_fem', 'percent_two', 'percent_paci', 'percent_whit', 'percent_bl', 'percent_his', 'percent_as', 'percent_nat', 'percent_low']].apply(pd.to_numeric, errors='coerce')
-    #Divides each column row by its number of students
-    dataframe[['percent_male', 'percent_fem', 'percent_two', 'percent_paci', 'percent_whit', 'percent_bl', 'percent_his', 'percent_as', 'percent_nat', 'percent_low']] = dataframe[['percent_male', 'percent_fem', 'percent_two', 'percent_paci', 'percent_whit', 'percent_bl', 'percent_his', 'percent_as', 'percent_nat', 'percent_low']].div(dataframe['num_of_students'], axis=0).round(3).multiply(100)
+    #This is a recurring set of columns used to format and clean the dataframe
+    demo_columns = [
+        'percent_male', 'percent_fem', 'percent_two',
+        'percent_paci', 'percent_whit', 'percent_bl',
+        'percent_his', 'percent_as', 'percent_nat',
+        'percent_low'
+        ]
+
+    dataframe = pd.read_csv(
+        path_data,
+        skiprows=6,
+        skipfooter=7,
+        engine='python',
+        encoding='utf-8'
+        )
+    
+    dataframe.columns = [
+        'name', 'state',
+        'st_abrv', 'county',
+        'website', 'phone',
+        'school_type', '12_offered',
+        'num_of_students'] + demo_columns + ['city']
+
+    dataframe["st_abrv"] = dataframe["st_abrv"].astype('str')
+    dataframe["st_abrv"] = dataframe["st_abrv"].str.rstrip()
+
+    #Cleanup of empty values/invalid
+    dataframe = dataframe.replace(
+        ['†', '–', '‡', '="0"'],
+        ['0','0','0','0'],
+        regex=True
+        )
+
+    #Changes all the values for students demographs into numeric
+    dataframe[['num_of_students'] + demo_columns] = (dataframe[
+        ['num_of_students'] + demo_columns]
+        .apply(pd.to_numeric, errors='coerce')
+        )
+
+    #Divides each column row by its number of students and sets as percentage
+    dataframe[demo_columns] = (dataframe[demo_columns]
+        .div(dataframe['num_of_students'], axis=0)
+        .round(3)
+        .multiply(100)
+        )
     dataframe = dataframe.fillna(0)
-    #print(dataframe.dtypes)
-    #print(dataframe)
+
     return dataframe
 
 def pandas_to_sql(dataframe, db):
-    print("I shouldn't be running!")
     dataframe.to_sql(
         name='School',
         con=db.engine,
