@@ -102,7 +102,11 @@
       {%for school in schools%}
         <article class="media content-section table-responsive">
           <div class="media-body">
-          <h3><a class="article-title" href="#">{{school.name}}, {{school.city}}</a></h3>
+          {%if school.website == "#"%}
+          <h3><a class="article-title" href={{"https://www.google.com/search?q=" + urlify(school.name)}}>{{school.name}}, {{school.city}}</a></h3>
+          {%else%}
+          <h3><a class="article-title" href={{school.website}}>{{school.name}}, {{school.city}}</a></h3>
+          {%endif%}
           <h4 class="article-content">Students: {{school.num_of_students}} </h4>
           <table id="no-more-tables" class="table table-sm">
             <thead>

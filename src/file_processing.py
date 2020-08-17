@@ -66,13 +66,13 @@ def pandas_file_handler():
         'school_type', '12_offered',
         'num_of_students'] + demo_columns + ['city']
 
-    dataframe["st_abrv"] = dataframe["st_abrv"].astype('str')
+    dataframe["st_abrv"] = dataframe["st_abrv"].astype(str)
     dataframe["st_abrv"] = dataframe["st_abrv"].str.rstrip()
 
     #Cleanup of empty values/invalid
-    dataframe = dataframe.replace(
-        ['†', '–', '‡', '="0"'],
-        ['0','0','0','0'],
+    dataframe['website'] = dataframe['website'].replace(
+        to_replace=u'†', #When replacing remember if comparing unicodes!!!
+        value='#',
         regex=True
         )
 

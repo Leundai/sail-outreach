@@ -42,14 +42,16 @@ class Schools(db.Model):
     percent_fem = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<School %s, %s - %s - %s%% - %s%% - %s%% - %s%%>' % (
+        return '<School %s, %s - %s - %s%% - %s%% - %s%% - %s%% - %s>' % (
                 self.name, self.city, self.state, 
                 self.num_of_students, self.percent_bl, 
-                self.percent_as, self.percent_his
+                self.percent_as, self.percent_his,
+                self.website
             )
 
 #TODO: Check the website every certain year date when databse is updated
-if not path.exists("schools.db"):
+#TODO: Improve ranking to account for student ratio/number of students
+if path.exists("schools.db"):
     pandas_to_sql(pandas_file_handler(), db)
 
 @app.route('/',  methods=['POST', 'GET'])
@@ -105,7 +107,7 @@ def index():
     else:
         print("Get Request Made")
 
-    return render_template('index.html', schools=schools)
+    return render_template('index.html', schools=schools, urlify=urlify)
 
 def get_school_col(filter_input):
     if filter_input == 1:
@@ -126,6 +128,10 @@ def get_school_col(filter_input):
         return 40, Schools.percent_free
     else:
         return 0, Schools.num_of_students
+
+def urlify(input=""):
+    length = len(input)
+    return input[:length].replace(' ', '%20')
 
 if __name__ == "__app__":
     app.run(debug=True)
