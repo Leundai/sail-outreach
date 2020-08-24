@@ -98,14 +98,14 @@
     </div>
     </div>
     <div class="col-lg-8">
-      <h1>Schools</h1>
+      <h1>Schools</h1> 
       {%for school in schools%}
         <article class="media content-section table-responsive">
           <div class="media-body">
           {%if school.website == "#"%}
-          <h3><a class="article-title" href={{"https://www.google.com/search?q=" + urlify(school.name)}}>{{school.name}}, {{school.city}}</a></h3>
+          <h3><a class="article-title" href={{"https://www.google.com/search?q=" + urlify(school.name)}} target="_blank">{{school.name}}, {{school.city}}</a></h3>
           {%else%}
-          <h3><a class="article-title" href={{school.website}}>{{school.name}}, {{school.city}}</a></h3>
+          <h3><a class="article-title" href={{school.website}} target="_blank">{{school.name}}, {{school.city}}</a></h3>
           {%endif%}
           <h4 class="article-content">Students: {{school.num_of_students}} </h4>
           <table id="no-more-tables" class="table table-sm">
