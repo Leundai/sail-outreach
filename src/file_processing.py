@@ -25,9 +25,9 @@ TODO:
 
 path_data = Path(__file__).parent / "../data/national.csv"
 
-#This was created in reference to
-#../data/illinois.xlsx
-#Indices of the Spreadsheets
+# This was created in reference to
+# ../data/illinois.xlsx
+# Indices of the Spreadsheets
 Type = 1
 Name = 2
 City = 4
@@ -43,7 +43,7 @@ Two_or_More = 22
 Low_Income = 26
 
 def pandas_file_handler():
-    #This is a recurring set of columns used to format and clean the dataframe
+    # This is a recurring set of columns used to format and clean the dataframe
     demo_columns = [
         'percent_male', 'percent_fem', 'percent_two',
         'percent_paci', 'percent_whit', 'percent_bl',
@@ -69,20 +69,20 @@ def pandas_file_handler():
     dataframe["st_abrv"] = dataframe["st_abrv"].astype(str)
     dataframe["st_abrv"] = dataframe["st_abrv"].str.rstrip()
 
-    #Cleanup of empty values/invalid
+    # Cleanup of empty values/invalid
     dataframe['website'] = dataframe['website'].replace(
         to_replace=u'†', #When replacing remember if comparing unicodes!!!
         value='#',
         regex=True
         )
 
-    #Changes all the values for students demographs into numeric
+    # Changes all the values for students demographs into numeric
     dataframe[['num_of_students'] + demo_columns] = (dataframe[
         ['num_of_students'] + demo_columns]
         .apply(pd.to_numeric, errors='coerce')
         )
 
-    #Divides each column row by its number of students and sets as percentage
+    # Divides each column row by its number of students and sets as percentage
     dataframe[demo_columns] = (dataframe[demo_columns]
         .div(dataframe['num_of_students'], axis=0)
         .multiply(100)

@@ -49,8 +49,8 @@ class Schools(db.Model):
                 self.website
             )
 
-#TODO: Check the website every certain year date when databse is updated
-#TODO: Improve ranking to account for student ratio/number of students
+# TODO: Check the website every certain year date when databse is updated
+# TODO: Improve ranking to account for student ratio/number of students
 if path.exists("schools.db"):
     pandas_to_sql(pandas_file_handler(), db)
 
@@ -62,12 +62,13 @@ def index():
         .desc())
         .all()
         )
+        
     if request.method == "POST":
         select_filter = request.form['sel-filter']
 
         select_state = request.form['sel-state']
         if not select_state:
-            #Default State Value
+            # Default State Value
             select_state = "IL"
 
         filter_percent_input = ""
@@ -109,6 +110,8 @@ def index():
 
     return render_template('index.html', schools=schools, urlify=urlify)
 
+# filter_input is a specific value for what ethnicity to focus in
+# Get_school_col gives a tuple for both the percent and type of filter
 def get_school_col(filter_input):
     if filter_input == 1:
         return 30, Schools.percent_whit
