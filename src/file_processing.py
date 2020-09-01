@@ -85,8 +85,8 @@ def pandas_file_handler():
     #Divides each column row by its number of students and sets as percentage
     dataframe[demo_columns] = (dataframe[demo_columns]
         .div(dataframe['num_of_students'], axis=0)
-        .round(3)
         .multiply(100)
+        .round(1)
         )
     dataframe = dataframe.fillna(0)
 
