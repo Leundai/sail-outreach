@@ -103,6 +103,7 @@
         <article class="media content-section table-responsive">
           <div class="media-body">
           {%if school.website == "#"%}
+          <!--This is the alternative if there is no websites TODO: Try to make this so that it searches for the website-->
           <h3><a class="article-title" href={{"https://www.google.com/search?q=" + urlify(school.name)}} target="_blank">{{school.name}}, {{school.city}}</a></h3>
           {%else%}
           <h3><a class="article-title" href={{school.website}} target="_blank">{{school.name}}, {{school.city}}</a></h3>
