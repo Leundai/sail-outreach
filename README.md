@@ -5,4 +5,4 @@ Outreach program that searches through high schools and ranks them based on give
 # Tech Stack
 
 - Flask
-- SOON: React/Flask/MongoDB
+- SOON: MERN Stack or FRENP
